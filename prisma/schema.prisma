@@ -109,6 +109,7 @@ model borrow {
   bookId    Int
   borrowAt  DateTime @default(now())
   returnAt  DateTime
+  status    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
