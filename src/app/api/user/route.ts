@@ -26,6 +26,8 @@ export async function GET(req: NextRequest) {
         id: true,
         name: true,
         username: true,
+        email: true,
+        address: true,
         role: true,
         createdAt: true,
         updatedAt: true,
@@ -43,7 +45,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Error getting users:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: "An unexpected error occurred.", message: error },
       {
         status: 500,
       }
@@ -64,7 +66,8 @@ export async function POST(req: NextRequest) {
   }
   try {
     const body = await req.json();
-    const { name, username, password, role } = userCreationSchema.parse(body);
+    const { name, username, email, address, password, role } =
+      userCreationSchema.parse(body);
 
     const hashedPassword = await hash(password!, 12);
 
@@ -90,6 +93,8 @@ export async function POST(req: NextRequest) {
       data: {
         name: name!,
         username: username,
+        email: email!,
+        address: address!,
         password: hashedPassword,
         role: role,
       },
@@ -98,6 +103,8 @@ export async function POST(req: NextRequest) {
     const user = {
       name: createdUser.name,
       username: createdUser.username,
+      email: createdUser.email,
+      address: createdUser.address,
       password: hashedPassword,
       role: createdUser.role,
     };
@@ -170,7 +177,7 @@ export async function DELETE(req: NextRequest) {
   } catch (error) {
     console.error("Error deleting user:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: "An unexpected error occurred.", message: error },
       {
         status: 500,
       }

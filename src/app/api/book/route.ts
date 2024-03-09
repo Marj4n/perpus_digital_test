@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Error getting books:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: "An unexpected error occurred.", message: error },
       {
         status: 500,
       }
@@ -38,14 +38,15 @@ export async function POST(req: NextRequest) {
   }
   try {
     const body = await req.json();
-    const { title, author, published, description, pdf, cover } =
+    const { title, author, publisher, published, description, pdf, cover } =
       bookCreationSchema.parse(body);
 
     const book = await prisma.book.create({
       data: {
         title,
         author,
-        published,
+        publisher,
+        published: new Date(published),
         description,
         pdf,
         cover,
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error creating book:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: "An unexpected error occurred.", message: error },
       {
         status: 500,
       }
@@ -86,7 +87,7 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const { searchParams } = new URL(req.url);
     const bookId = searchParams.get("id");
-    const { title, author, published, description, pdf, cover } =
+    const { title, author, publisher, published, description, pdf, cover } =
       bookCreationSchema.parse(body);
 
     const book = prisma.book.findUnique({
@@ -113,7 +114,8 @@ export async function PUT(req: NextRequest) {
       data: {
         title,
         author,
-        published,
+        publisher,
+        published: new Date(published),
         description,
         pdf,
         cover,
@@ -132,7 +134,7 @@ export async function PUT(req: NextRequest) {
   } catch (error) {
     console.error("Error updating book:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: "An unexpected error occurred.", message: error },
       {
         status: 500,
       }
@@ -189,7 +191,7 @@ export async function DELETE(req: NextRequest) {
   } catch (error) {
     console.error("Error deleting book:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: "An unexpected error occurred.", message: error },
       {
         status: 500,
       }

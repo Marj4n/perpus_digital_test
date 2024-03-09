@@ -6,12 +6,21 @@ async function seedUsers() {
   const usersData = [
     {
       username: "user",
+      email: "user@user.com",
       name: "This is a user",
       role: Role.user,
       password: "user123",
     },
     {
+      username: "operator",
+      email: "opertor@operator.com",
+      name: "This is a operator",
+      role: Role.operator,
+      password: "operator123",
+    },
+    {
       username: "admin",
+      email: "admin@admin.com",
       name: "This is a admin",
       role: Role.admin,
       password: "admin123",
@@ -19,7 +28,7 @@ async function seedUsers() {
   ];
 
   for (const userData of usersData) {
-    const { username, name, role, password } = userData;
+    const { username, email, name, role, password } = userData;
     const hashedPassword = await bcrypt.hash(password, 12);
 
     await prisma.user.upsert({
@@ -27,6 +36,7 @@ async function seedUsers() {
       update: {},
       create: {
         username,
+        email,
         name,
         role,
         password: hashedPassword,

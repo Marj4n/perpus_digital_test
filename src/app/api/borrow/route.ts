@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isLogin } from "@/lib/utils";
-import { favoriteCreationSchema } from "@/schemas/favorite";
+import { borrowCreationSchema } from "@/schemas/borrow";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const userId = searchParams.get("userId");
 
     if (userId) {
-      const favorite = await prisma.favorite.findMany({
+      const borrow = await prisma.borrow.findMany({
         where: {
           userId: Number(userId),
         },
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
       return NextResponse.json(
         {
-          favorite,
+          borrow,
         },
         {
           status: 200,
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const favorites = await prisma.favorite.findMany({
+    const borrows = await prisma.borrow.findMany({
       include: {
         user: {
           select: {
@@ -39,14 +39,14 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(
       {
-        favorites,
+        borrows,
       },
       {
         status: 200,
       }
     );
   } catch (error) {
-    console.error("Error getting favorites:", error);
+    console.error("Error getting borrows:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred." },
       {
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   }
   try {
     const body = await req.json();
-    const { userId, bookId } = favoriteCreationSchema.parse(body);
+    const { userId, bookId, returnAt } = borrowCreationSchema.parse(body);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -103,17 +103,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const existingFavorite = await prisma.favorite.findFirst({
+    const existingBorrow = await prisma.borrow.findFirst({
       where: {
         userId,
         bookId,
       },
     });
 
-    if (existingFavorite) {
+    if (existingBorrow) {
       return NextResponse.json(
         {
-          error: "Favorite already exists.",
+          error: "Already borrowed.",
         },
         {
           status: 400,
@@ -121,25 +121,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const favorite = await prisma.favorite.create({
+    const borrow = await prisma.borrow.create({
       data: {
         userId,
         bookId,
+        returnAt,
       },
     });
 
     return NextResponse.json(
       {
-        favorite,
+        borrow,
       },
       {
         status: 201,
       }
     );
   } catch (error) {
-    console.error("Error creating favorite:", error);
+    console.error("Error creating borrow:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: "An unexpected error occurred.", message: error },
       {
         status: 500,
       }
@@ -160,17 +161,17 @@ export async function DELETE(req: NextRequest) {
   }
   try {
     const { searchParams } = new URL(req.url);
-    const favoriteId = searchParams.get("id");
-    const favorite = await prisma.favorite.findUnique({
+    const borrowId = searchParams.get("id");
+    const borrow = await prisma.collection.findUnique({
       where: {
-        id: Number(favoriteId),
+        id: Number(borrowId),
       },
     });
 
-    if (!favorite) {
+    if (!borrow) {
       return NextResponse.json(
         {
-          error: "Favorite not found.",
+          error: "Borrow not found.",
         },
         {
           status: 404,
@@ -178,23 +179,23 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    await prisma.favorite.delete({
+    await prisma.collection.delete({
       where: {
-        id: Number(favoriteId),
+        id: Number(borrowId),
       },
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: "favorite deleted.",
+        message: "borrow deleted.",
       },
       {
         status: 200,
       }
     );
   } catch (error) {
-    console.error("Error deleting favorite:", error);
+    console.error("Error deleting borrow:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred." },
       {

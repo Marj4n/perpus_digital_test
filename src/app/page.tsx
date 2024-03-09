@@ -44,7 +44,7 @@ export default async function Home() {
           user?.role === "admin" ? "lg:grid-cols-4" : "lg:grid-cols-3"
         } lg:text-left`}
       >
-        {user?.role === "admin" && (
+        {(user?.role === "admin" || user?.role === "operator") && (
           <Link
             href="/dashboard"
             className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
@@ -57,7 +57,24 @@ export default async function Home() {
             </h2>
             <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
               Check out the dashboard page, where you can create, read, update
-              and delete users.
+              and delete books and users.
+            </p>
+          </Link>
+        )}
+
+        {user?.role === "user" && (
+          <Link
+            href="/borrow"
+            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          >
+            <h2 className={`mb-3 text-2xl font-semibold`}>
+              Borrow{" "}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                -&gt;
+              </span>
+            </h2>
+            <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+              Borrow books from our library
             </p>
           </Link>
         )}

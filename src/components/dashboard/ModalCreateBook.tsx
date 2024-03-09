@@ -15,7 +15,6 @@ import { useToast } from "../ui/use-toast";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { userCreationSchema } from "@/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField } from "../ui/form";
 import { ToastAction } from "@radix-ui/react-toast";
@@ -27,27 +26,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { bookCreationSchema } from "@/schemas/book";
 
-const ModalCreateUser = () => {
+const ModalCreateBook = () => {
   const { toast } = useToast();
-  const form = useForm<z.infer<typeof userCreationSchema>>({
-    resolver: zodResolver(userCreationSchema),
+  const form = useForm<z.infer<typeof bookCreationSchema>>({
+    resolver: zodResolver(bookCreationSchema),
   });
 
-  function onSubmit(data: z.infer<typeof userCreationSchema>) {
+  function onSubmit(data: z.infer<typeof bookCreationSchema>) {
     try {
       console.log(data);
-      axios.post("/api/user", {
-        name: data.name,
-        username: data.username,
-        email: data.email,
-        address: data.address,
-        role: data.role,
-        password: data.password,
+      axios.post("/api/book", {
+        title: data.title,
+        author: data.author,
+        publisher: data.publisher,
+        published: data.published,
+        description: data.description,
+        pdf: data.pdf,
+        cover: data.cover,
       });
 
       toast({
-        title: "User created successfully.",
+        title: "Book created successfully.",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <code className="text-white">{JSON.stringify(data, null, 2)}</code>
@@ -77,7 +78,7 @@ const ModalCreateUser = () => {
         location.reload();
       }, 3000);
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error("Error creating book:", error);
       toast({
         title: "Error",
         description: "Failed to create account.",
@@ -94,14 +95,14 @@ const ModalCreateUser = () => {
           className="xs:ml-2 sm:ml-5 dark:bg-gray-700 shadow xs:p-2 sm:px-4 sm:py-2"
         >
           <Plus className="xs:mr-0 sm:mr-2 w-5 h-5 sm:block xs:block" />
-          <span className="sm:block xs:hidden">Create Account</span>
+          <span className="sm:block xs:hidden">Create Book</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Account</DialogTitle>
+          <DialogTitle>Insert Book</DialogTitle>
           <DialogDescription>
-            Create a new user by filling out the form below.
+            Insert a new book by filling out the form below.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -111,15 +112,15 @@ const ModalCreateUser = () => {
           >
             <FormField
               control={form.control}
-              name="name"
+              name="title"
               render={({ field }) => (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right">Name</Label>
+                  <Label className="text-right">Title</Label>
                   <Input
                     onChange={field.onChange}
                     defaultValue={field.value}
                     className="col-span-3"
-                    placeholder="Enter name"
+                    placeholder="Enter title"
                     required
                   />
                 </div>
@@ -128,16 +129,15 @@ const ModalCreateUser = () => {
 
             <FormField
               control={form.control}
-              name="username"
+              name="author"
               render={({ field }) => (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right">Username</Label>
+                  <Label className="text-right">Author</Label>
                   <Input
-                    type="username"
                     onChange={field.onChange}
                     defaultValue={field.value}
                     className="col-span-3"
-                    placeholder="Enter username"
+                    placeholder="Enter author"
                     required
                   />
                 </div>
@@ -146,16 +146,15 @@ const ModalCreateUser = () => {
 
             <FormField
               control={form.control}
-              name="email"
+              name="publisher"
               render={({ field }) => (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right">Email</Label>
+                  <Label className="text-right">Publisher</Label>
                   <Input
-                    type="email"
                     onChange={field.onChange}
                     defaultValue={field.value}
                     className="col-span-3"
-                    placeholder="Enter email"
+                    placeholder="Enter publisher"
                     required
                   />
                 </div>
@@ -164,16 +163,16 @@ const ModalCreateUser = () => {
 
             <FormField
               control={form.control}
-              name="address"
+              name="published"
               render={({ field }) => (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right">Address</Label>
+                  <Label className="text-right">Published</Label>
                   <Input
-                    type="text"
+                    type="date"
                     onChange={field.onChange}
                     defaultValue={field.value}
-                    className="col-span-3"
-                    placeholder="Enter address"
+                    className="w-[150px]"
+                    placeholder="Enter published"
                     required
                   />
                 </div>
@@ -182,41 +181,49 @@ const ModalCreateUser = () => {
 
             <FormField
               control={form.control}
-              name="role"
+              name="description"
               render={({ field }) => (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right">Role</Label>
-                  <Select
+                  <Label className="text-right">Description</Label>
+                  <Input
+                    onChange={field.onChange}
                     defaultValue={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select a Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="operator">Operator</SelectItem>
-                        <SelectItem value="user">User</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                    className="col-span-3"
+                    placeholder="Enter description"
+                    required
+                  />
                 </div>
               )}
             />
 
             <FormField
               control={form.control}
-              name="password"
+              name="pdf"
               render={({ field }) => (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right">Password</Label>
+                  <Label className="text-right">PDF</Label>
                   <Input
-                    type="text"
                     onChange={field.onChange}
                     defaultValue={field.value}
                     className="col-span-3"
-                    placeholder="Enter password"
+                    placeholder="Enter link PDF"
+                    required
+                  />
+                </div>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="cover"
+              render={({ field }) => (
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-right">Cover</Label>
+                  <Input
+                    onChange={field.onChange}
+                    defaultValue={field.value}
+                    className="col-span-3"
+                    placeholder="Enter link cover"
                     required
                   />
                 </div>
@@ -233,4 +240,4 @@ const ModalCreateUser = () => {
   );
 };
 
-export default ModalCreateUser;
+export default ModalCreateBook;

@@ -1,10 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { LayoutDashboard } from "lucide-react";
-import DataResponse from "./data-response";
 import { CardDescription, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 export const metadata = {
   title: "Dashboard | Next-Fullstack",
@@ -13,7 +11,7 @@ export const metadata = {
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   const user = session?.user;
-  if (user?.role !== "admin") {
+  if (user?.role !== "admin" && user?.role !== "operator") {
     return redirect("/");
   }
 
@@ -24,11 +22,49 @@ export default async function DashboardPage() {
           Dashboard
         </CardTitle>
         <CardDescription className="xs:hidden sm:block">
-          This page is only accessible to admin users, and will display user data.
+          This page is only accessible to admin users, and will display user
+          data.
         </CardDescription>
       </div>
       <div className="container mx-auto py-10 !px-0">
-        <DataResponse />
+        <div
+          className={`mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 ${
+            user?.role === "admin" ? "lg:grid-cols-4" : "lg:grid-cols-3"
+          } lg:text-left`}
+        >
+          {user?.role === "admin" && (
+            <Link
+              href="/dashboard/user"
+              className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+            >
+              <h2 className={`mb-3 text-2xl font-semibold`}>
+                User{" "}
+                <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                  -&gt;
+                </span>
+              </h2>
+              <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+                Check out the user page, where you can create, read, update and
+                delete users.
+              </p>
+            </Link>
+          )}
+          <Link
+            href="/dashboard/book"
+            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          >
+            <h2 className={`mb-3 text-2xl font-semibold`}>
+              Book{" "}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                -&gt;
+              </span>
+            </h2>
+            <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+              Check out the book page, where you can create, read, update and
+              delete books.
+            </p>
+          </Link>
+        </div>
       </div>
     </main>
   );

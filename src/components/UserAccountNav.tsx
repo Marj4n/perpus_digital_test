@@ -17,6 +17,7 @@ type Props = {
     id: string;
     name: string;
     username: string;
+    email: string;
     role: string;
   };
 };
@@ -41,7 +42,7 @@ const UserAccountNav = ({ user }: Props) => {
           <div className="flex flex-col space-y-1 leading-none">
             {user.name && (
               <b className=" text-black">
-                {user.name} || {user.role}
+                {user.name} || {user.role} || {user.email}
               </b>
             )}
             {user.username && (

@@ -14,6 +14,8 @@ export const RegisterForm = () => {
   const [formValues, setFormValues] = useState({
     name: "",
     username: "",
+    email: "",
+    address: "",
     password: "",
     confirmPass: "",
   });
@@ -33,6 +35,8 @@ export const RegisterForm = () => {
         setFormValues({
           name: "",
           username: "",
+          email: "",
+          address: "",
           password: "",
           confirmPass: "",
         });
@@ -59,7 +63,9 @@ export const RegisterForm = () => {
     }
   };
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+  ) => {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
   };
@@ -93,6 +99,35 @@ export const RegisterForm = () => {
           onChange={handleChange}
           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Your Username"
+          required
+        />
+      </div>
+      {/* Email */}
+      <div>
+        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Your Email
+        </label>
+        <input
+          type="email"
+          name="email"
+          value={formValues.email}
+          onChange={handleChange}
+          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Your Email"
+          required
+        />
+      </div>
+      {/* Address */}
+      <div>
+        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Your Address
+        </label>
+        <textarea
+          name="address"
+          value={formValues.address}
+          onChange={handleChange}
+          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Your Address"
           required
         />
       </div>
